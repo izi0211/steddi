@@ -491,6 +491,26 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .bgstatus.s-vlow,.bgstatus.s-low{color:var(--low);background:var(--low-soft)}
 .bgstatus.s-ok{color:var(--ok);background:var(--ok-soft)}
 .bgstatus.s-high,.bgstatus.s-vhigh{color:var(--high);background:var(--high-soft)}
+
+/* Sign-up: three short steps, same colours as the main page */
+.signup .wrap{gap:14px}
+:root[data-look="light"] .signup{background:linear-gradient(165deg,#C9EBDF 0%,#D7E4F7 48%,#EFDDEB 100%)}
+.suprog{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.suprog i{height:5px;border-radius:99px;background:var(--line)}
+.suprog i.on{background:linear-gradient(90deg,#0E6F64,#6A4BC4)}
+.sustep{display:grid;gap:14px}
+.suhead{display:grid;gap:6px}
+.sukick{font:700 .72rem/1 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
+.sucard{display:grid;gap:16px}
+.sunav{display:flex;gap:10px}
+.sunav .btn{flex:1}
+.sunav #suBack{flex:0 0 32%}
+.sunav .btn{min-height:56px;border-radius:16px;font-size:1.05rem}
+.sunav #suNext{box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent)}
+:root[data-look="light"] .sunav #suNext{background:linear-gradient(135deg,#0E6F64,#178C7E 55%,#3E6FC9);box-shadow:0 10px 22px rgba(23,140,126,.32)}
+.sucard .row:has(> .field[hidden] + .field:not([hidden])),.sucard .row:has(> .field:not([hidden]) + .field[hidden]){grid-template-columns:1fr}
+.sufoot{text-align:center}
+.suerr{color:var(--low);font-weight:700}
 </style>
 </head>
 <body>
@@ -499,10 +519,14 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 <div id="signup" class="signup" hidden>
   <div class="wrap">
     <div class="brandrow"><svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14A08E"/><stop offset="1" stop-color="#6A4BC4"/></linearGradient></defs><rect width="512" height="512" rx="116" fill="url(#lg0)"/><path d="M256 78C256 78 120 236 120 318a136 136 0 0 0 272 0C392 236 256 78 256 78Z" fill="#fff"/><path d="M168 322q22-26 44 0t44 0t44 0t44 0" fill="none" stroke="#0E6F64" stroke-width="20" stroke-linecap="round"/></svg><div class="brand"><h1>Stedd<span>i</span></h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
-    <div style="display:grid;gap:6px"><h2 class="su-title">Create your profile</h2>
-      <p class="note">This takes a minute and helps the app tailor its advice to you. You can change any of it later in Profile and Settings.</p></div>
-    <form id="signupForm" class="card" autocomplete="off" novalidate>
-      <div class="field"><label class="lbl" for="uSetup">How do you manage your diabetes?</label>
+    <div class="suprog" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+    <form id="signupForm" autocomplete="off" novalidate>
+      <section class="sustep" data-sustep="1">
+        <div class="suhead"><span class="sukick">Step 1 of 3</span><h2 class="su-title">Welcome to Steddi</h2>
+          <p class="note">Tell us how you manage your diabetes so advice fits you.</p></div>
+        <div class="card sucard">
+          <div class="field"><label class="lbl" for="uName">First name</label><input id="uName" placeholder="Optional" autocomplete="given-name"></div>
+          <div class="field"><label class="lbl" for="uSetup">How do you manage your diabetes?</label>
         <select id="uSetup">
           <option value="mdi">Finger-prick tests and injections</option>
           <option value="cgm">Sensor and injections</option>
@@ -511,40 +535,49 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
           <option value="loop">Sensor and pump linked (closed loop)</option>
         </select>
         <p class="note" id="uSetupNote"></p></div>
-      <div class="row">
+          <div class="row">
         <div class="field" id="uSensorField"><label class="lbl" for="uSensor">Your sensor</label><select id="uSensor"><option value="libre2">FreeStyle Libre 2</option><option value="libre2plus">FreeStyle Libre 2 Plus</option><option value="libre3">FreeStyle Libre 3</option><option value="libre3plus">FreeStyle Libre 3 Plus</option><option value="dexg6">Dexcom G6</option><option value="dexg7">Dexcom G7</option><option value="dexone">Dexcom ONE+</option><option value="simplera">Medtronic Simplera or Guardian</option><option value="other">Other sensor</option></select></div>
         <div class="field" id="uPumpField"><label class="lbl" for="uPump">Your pump</label><select id="uPump"><option value="omnipod">Omnipod 5</option><option value="tslim">Tandem t:slim X2 or Mobi</option><option value="medtronic">Medtronic MiniMed 780G</option><option value="ypso">mylife YpsoPump</option><option value="other">Other pump</option></select></div>
       </div>
-      <div class="field"><label class="lbl" for="uName">First name</label><input id="uName" placeholder="Optional" autocomplete="given-name"></div>
-      <div class="field"><label class="lbl" for="uGoal">Your goal</label>
+          <div class="row" style="align-items:end">
+        <div class="field"><label class="lbl" for="uRapid">Rapid-acting insulin</label><select id="uRapid"></select></div>
+        <div class="field" id="uLongField"><label class="lbl" for="uLong">Long-acting insulin</label><select id="uLong"></select></div>
+      </div>
+        </div>
+      </section>
+      <section class="sustep" data-sustep="2" hidden>
+        <div class="suhead"><span class="sukick">Step 2 of 3</span><h2 class="su-title">Your goals</h2>
+          <p class="note">This shapes your meal and snack suggestions.</p></div>
+        <div class="card sucard">
+          <div class="field"><label class="lbl" for="uGoal">Your goal</label>
         <select id="uGoal"><option value="steady">Keep my blood sugar steady</option><option value="lose">Lose weight</option><option value="maintain">Maintain my weight</option><option value="gain">Gain weight or build muscle</option><option value="fitness">Get fitter or train for sport</option></select>
         <p class="goalnote" id="uGoalNote"></p></div>
-      <div class="field">
+          <div class="field">
         <label class="lbl" for="uCal">Daily calorie goal <span class="suffix">optional</span></label>
         <div class="goalset"><input id="uCal" inputmode="numeric" placeholder="e.g. 2000"><span class="suffix">kcal a day</span></div>
-        <p class="note">Leave it blank if you don't want one. You can turn it on or off later in Overview. Not sure what to aim for? Ask your diabetes team or a dietitian, and never skip insulin to lose weight.</p>
+        <p class="note">Leave blank if you don't want one. Never skip insulin to lose weight.</p>
       </div>
-      <div class="field"><label class="lbl" for="uUnit">Blood sugar units</label>
+          <div class="field"><label class="lbl" for="uUnit">Blood sugar units</label>
         <select id="uUnit"><option value="mmol">mmol/L (UK)</option><option value="mgdl">mg/dL</option></select></div>
-      <div class="field"><label class="lbl" for="uBodyUnit">Height and weight units</label>
+          <div class="field"><label class="lbl" for="uBodyUnit">Height and weight units</label>
         <select id="uBodyUnit"><option value="metric">Centimetres and kilograms</option><option value="imperial">Feet, inches, stone and pounds</option></select></div>
-      <div class="row" id="uMetricRow">
+          <div class="row" id="uMetricRow">
         <div class="field"><label class="lbl" for="uHcm">Height <span class="suffix">cm</span></label><input id="uHcm" inputmode="decimal" placeholder="e.g. 175"></div>
         <div class="field"><label class="lbl" for="uWkg">Weight <span class="suffix">kg</span></label><input id="uWkg" inputmode="decimal" placeholder="e.g. 70"></div>
       </div>
-      <div id="uImperialRows" hidden style="display:grid;gap:12px">
+          <div id="uImperialRows" hidden style="display:grid;gap:12px">
         <div class="field"><span class="lbl">Height <span class="suffix">feet, inches</span></span>
           <div class="row"><input id="uHft" inputmode="numeric" placeholder="ft" aria-label="Height, feet"><input id="uHin" inputmode="decimal" placeholder="in" aria-label="Height, inches"></div></div>
         <div class="field"><span class="lbl">Weight <span class="suffix">stone, pounds</span></span>
           <div class="row"><input id="uWst" inputmode="numeric" placeholder="st" aria-label="Weight, stone"><input id="uWlb" inputmode="decimal" placeholder="lb" aria-label="Weight, pounds"></div></div>
       </div>
-      <div class="row" style="align-items:end">
-        <div class="field"><label class="lbl" for="uRapid">Rapid-acting insulin</label><select id="uRapid"></select></div>
-        <div class="field" id="uLongField"><label class="lbl" for="uLong">Long-acting insulin</label><select id="uLong"></select></div>
-      </div>
-      <details class="numbers" open>
-        <summary>Your insulin numbers (for dose recommendations)</summary>
-        <p class="note">Your diabetes team gives you these. They let the app work out your recommended dose. Skip them if you don't know them yet. You can add them later in Settings.</p>
+        </div>
+      </section>
+      <section class="sustep" data-sustep="3" hidden>
+        <div class="suhead"><span class="sukick">Step 3 of 3</span><h2 class="su-title">Your insulin numbers</h2>
+          <p class="note">From your diabetes team. They let Steddi work out your dose. Not sure? Skip and add them later in Settings.</p></div>
+        <div class="card sucard">
+          
         <div class="row">
           <div class="field"><label class="lbl" for="uIcr">1 unit covers <span class="suffix">g carbs</span></label><input id="uIcr" inputmode="decimal" placeholder="e.g. 10"></div>
           <div class="field"><label class="lbl" for="uIsf">1 unit lowers by <span class="suffix uu">mmol/L</span></label><input id="uIsf" inputmode="decimal" placeholder="e.g. 3"></div>
@@ -554,10 +587,15 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
           <div class="field"><label class="lbl" for="uAbove">Correct above <span class="suffix uu">mmol/L</span></label><input id="uAbove" inputmode="decimal" placeholder="e.g. 10"></div>
         </div>
         <label class="check" for="uConfirm"><input type="checkbox" id="uConfirm"> These numbers come from my diabetes team.</label>
-      </details>
-      <p class="note" id="signupErr" hidden></p>
-      <button class="btn" type="submit">Create my profile</button>
-      <p class="note">Your profile is stored on this device only.</p>
+        </div>
+      </section>
+      <p class="note suerr" id="signupErr" hidden></p>
+      <div class="sunav">
+        <button class="btn ghost" type="button" id="suBack" hidden>Back</button>
+        <button class="btn" type="button" id="suNext">Next</button>
+        <button class="btn" type="submit" id="suDone" hidden>Create my profile</button>
+      </div>
+      <p class="note sufoot">Stored on this device only. You can change anything later.</p>
     </form>
   </div>
 </div>
@@ -758,8 +796,6 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
         </div>
 
         <div class="field" id="photoBox" hidden>
-          <div class="btnrow"><label class="btn small" for="photoFile" id="photoBtn">Take a photo to work out the carbs<input type="file" id="photoFile" class="vh" accept="image/*" capture="environment"></label></div>
-          <p class="note" id="photoHint">AI looks at your photo and fills in the carbs, protein, fat and calories for you.</p>
           <div class="btnrow" id="lookupRow" hidden><button class="btn small ghost" type="button" id="lookupBtn">✦ Look up carbs with AI</button></div>
           <div id="photoOut"></div>
         </div>
@@ -1619,7 +1655,6 @@ function syncLookup(){ const t = $('fFood').value.trim(); $('lookupRow').hidden 
 function syncPhotoBox(){
   document.querySelectorAll('.cambtn').forEach(b=>b.hidden = !scanReady);
   const show = (logMode==='meal' || logMode==='snack') && !$('foodField').hidden && !!aiFn;
-  $('photoBtn').hidden = !scanReady; $('photoHint').hidden = !scanReady;
   $('photoBox').hidden = !show;
   if(show) syncLookup();
   if(!show && !photoBusy){ $('photoOut').innerHTML = ''; photoMacros = null }
@@ -1647,7 +1682,7 @@ function photoOutHTML(m){
     ${heavy ? `<span><b>High in fat or protein.</b> This can raise your sugar later, 3 to 5 hours after eating, so check again then.</span>` : ''}
     <span class="src">Estimated by AI (Claude) from your photo and filled in above. Photo estimates can be out by 20 g or more, so check the carbs before you inject.</span></div>`;
 }
-document.querySelectorAll('#photoFile, .photoin').forEach(inp=>inp.addEventListener('change', ev=>{ const file = ev.target.files && ev.target.files[0]; ev.target.value = ''; if(file) handlePhoto(file) }));
+document.querySelectorAll('.photoin').forEach(inp=>inp.addEventListener('change', ev=>{ const file = ev.target.files && ev.target.files[0]; ev.target.value = ''; if(file) handlePhoto(file) }));
 async function lookupFood(){
   const name = $('fFood').value.trim(); if(!name || !aiFn) return;
   const btn = $('lookupBtn'); btn.disabled = true;
@@ -1675,7 +1710,7 @@ Rules: grams except kcal. If the food is a branded or restaurant item you know, 
 }
 async function handlePhoto(file){
   if(!file || !scanFn) return;
-  photoBusy = true; $('photoBtn').classList.add('busy');
+  photoBusy = true; document.querySelectorAll('.cambtn').forEach(b=>b.classList.add('busy'));
   $('photoOut').innerHTML = '<div class="reco isai"><span class="ai">✦ AI photo estimate</span><span class="aiload">Working out what\'s on your plate…</span></div>';
   try{
     const r = await scanFn.json(PHOTO_PROMPT, {images:[file], cache:false});
@@ -1696,7 +1731,8 @@ async function handlePhoto(file){
   }catch(e){
     const code = e && e.code; if(code==='cancelled') return;
     $('photoOut').innerHTML = `<p class="scanmsg err">${esc(SCAN_ERR[code] || 'Something went wrong reading the photo. Please try again.')}</p>`;
-  }finally{ photoBusy = false; $('photoBtn').classList.remove('busy') }
+    try{ console.warn('Photo AI error', code, e && e.message) }catch(_){}
+  }finally{ photoBusy = false; document.querySelectorAll('.cambtn').forEach(b=>b.classList.remove('busy')) }
 }
 function applySnackSel(){
   const v = $('fSnackSel').value;
@@ -2730,7 +2766,14 @@ const SCAN_ERR = {
   rate_limited:'Too many scans just now. Try again in a minute.',
   image_rejected:'That picture couldn\'t be opened. Try a JPEG or PNG photo or screenshot.',
   refused:'Couldn\'t read that picture. Try a screenshot of your sensor app.',
-  session_expired:'Please sign in again, then scan.'
+  session_expired:'Please sign in again, then scan.',
+  timeout:'The AI took too long. Try again, or type the carbs in.',
+  bad_key:'The app\'s AI key isn\'t working. The app owner needs to check the key in Netlify.',
+  no_credit:'The app\'s AI has run out of credit. The app owner needs to top up at console.anthropic.com.',
+  not_configured:'AI isn\'t set up on this app yet.',
+  network:'No internet connection. Check your signal and try again.',
+  bad_json:'The AI\'s answer didn\'t come through properly. Please try again.',
+  upstream:'The AI service had a problem. Please try again in a moment.'
 };
 $('scanFile').addEventListener('change', async ev=>{
   const file = ev.target.files && ev.target.files[0]; ev.target.value = '';
@@ -3334,10 +3377,33 @@ function showSignup(){
   $('uUnit').value = S.unit; $('uRapid').value = S.rapidName; $('uLong').value = S.longName;
   $('uSetup').value = setupKey(); $('uSensor').value = S.sensor || 'libre3'; $('uPump').value = S.pump || 'omnipod'; devUI('u');
   fillBody('u', suUnit, null, null);
-  $('signup').hidden = false; document.body.style.overflow = 'hidden';
+  $('signup').hidden = false; document.body.style.overflow = 'hidden'; suShow(1);
 }
+
+// Sign-up steps
+let suStep = 1;
+function suShow(n){
+  suStep = n;
+  document.querySelectorAll('.sustep').forEach(x=>x.hidden = +x.dataset.sustep !== n);
+  document.querySelectorAll('.suprog i').forEach((x,i)=>x.classList.toggle('on', i < n));
+  $('suBack').hidden = n===1; $('suNext').hidden = n===3; $('suDone').hidden = n!==3;
+  $('signupErr').hidden = true;
+  $('signup').scrollTop = 0;
+}
+function suErr(t){ $('signupErr').textContent = t; $('signupErr').hidden = false }
+$('suNext').onclick = ()=>{
+  if(suStep===2){
+    const b = readBodyFrom('u', suUnit), err = bodyError(b, true);
+    if(err){ suErr(err); return }
+    const kc = num($('uCal').value);
+    if($('uCal').value.trim()!=='' && (kc==null || kc<800 || kc>6000)){ suErr('Enter a daily calorie goal between 800 and 6,000 kcal, or leave it blank.'); return }
+  }
+  suShow(suStep+1);
+};
+$('suBack').onclick = ()=>suShow(suStep-1);
 $('signupForm').addEventListener('submit', ev=>{
   ev.preventDefault();
+  if(suStep<3){ $('suNext').click(); return }
   const b = readBodyFrom('u', suUnit), err = bodyError(b, true);
   if(err){ $('signupErr').textContent = err; $('signupErr').hidden = false; return }
   S.name = $('uName').value.trim(); S.unit = $('uUnit').value;

@@ -8,10 +8,10 @@
     const url = URL.createObjectURL(file);
     try{
       const img = await new Promise((ok, no)=>{ const i = new Image(); i.onload=()=>ok(i); i.onerror=()=>no(err('image_rejected')); i.src = url });
-      const k = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
+      const k = Math.min(1, 1024 / Math.max(img.naturalWidth, img.naturalHeight));
       const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth*k); c.height = Math.round(img.naturalHeight*k);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      return c.toDataURL('image/jpeg', 0.82).split(',')[1];
+      return c.toDataURL('image/jpeg', 0.75).split(',')[1];
     } finally { URL.revokeObjectURL(url) }
   }
   async function call(prompt, opts){
@@ -23,8 +23,11 @@
       res = await fetch('/api/ai', { method:'POST', headers:{'Content-Type':'application/json'}, signal: opts.signal,
         body: JSON.stringify({ prompt: String(prompt), images, quick: opts.modelTier === 'quick' }) });
     }catch(e){ if (e && e.name === 'AbortError') throw err('cancelled'); throw err('network', 'No connection') }
-    if (res.status === 429) throw err('rate_limited');
-    if (!res.ok) throw err('unavailable', 'AI server error ' + res.status);
+    if (!res.ok){
+      let j = {}; try{ j = await res.json() }catch(e){}
+      if (res.status === 429) throw err('rate_limited');
+      throw err(j.error || (res.status === 502 || res.status === 504 ? 'timeout' : 'unavailable'), j.detail || ('AI server error ' + res.status));
+    }
     const data = await res.json();
     const text = data.text || '';
     if (opts.onText) try{ opts.onText({ text }) }catch(e){}
