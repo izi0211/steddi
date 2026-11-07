@@ -180,6 +180,8 @@ h1 span{color:var(--accent)}
 .logo{width:36px;height:36px;flex:none;border-radius:9px}
 .logo text{font-family:Inter,system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:30px;font-weight:800;fill:#fff}
 .logo text tspan{fill:#B8F5DE}
+.brand h1 span,:root[data-look="light"] .brand h1 span{background:none;-webkit-text-fill-color:currentColor;color:#12A87F}
+:root[data-look="dark"] .brand h1 span{color:#B8F5DE}
 .logo{box-shadow:0 4px 12px rgba(0,0,0,.2)}
 :root[data-look="dark"] .logo{box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .tagline{margin:0;font:700 .72rem/1 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
