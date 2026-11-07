@@ -546,8 +546,31 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .wnote{margin:0}
 .watercard.done .wamt{color:#2563EB}
 :root[data-look="dark"] .watercard.done .wamt{color:#7DD3FC}
-#dayStats{grid-template-columns:repeat(4,1fr)}
-@media (max-width:520px){#dayStats{grid-template-columns:1fr 1fr}}
+#dayStats{grid-template-columns:repeat(4,1fr)!important}
+@media (max-width:520px){#dayStats{grid-template-columns:1fr 1fr!important}}
+
+/* Same colour scheme on every tab */
+.hero{display:grid;gap:14px}
+.herorow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero h2{margin:0}
+.hero .note{margin:2px 0 0}
+:root[data-look="light"] .card.hero{background:linear-gradient(135deg,#0E6F64 0%,#14857A 45%,#4B5FC8 100%);border-color:transparent;color:#fff;box-shadow:0 14px 32px rgba(20,110,110,.28)}
+:root[data-look="light"] .hero h2,:root[data-look="light"] .hero .stat .v,:root[data-look="light"] .hero .stat .v .suffix{color:#fff}
+:root[data-look="light"] .hero .note,:root[data-look="light"] .hero .stat .lbl,:root[data-look="light"] .hero .stat .note{color:rgba(255,255,255,.82)}
+:root[data-look="light"] .hero .stat,:root[data-look="light"] .hero #dayStats .stat:nth-child(n){background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+:root[data-look="light"] .hero .btn.ghost{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:none}
+:root[data-look="light"] .hero .btn.ghost:disabled{opacity:.35}
+:root[data-look="light"] .hero .seg{background:rgba(255,255,255,.16)}
+:root[data-look="light"] .hero .seg button{color:rgba(255,255,255,.9)}
+:root[data-look="light"] .hero .seg button[aria-pressed="true"]{background:#fff;color:#0B5A51}
+.hero .daynav{margin:0}
+.hero .btnrow{margin:0}
+:root[data-look="light"] .view:not(#v-log) .card:not(.hero):not(.wrapcta){background:linear-gradient(170deg,#D3F1E6 0%,#DDE6FA 55%,#F3E0EE 100%);border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 32px rgba(40,90,110,.14)}
+:root[data-look="light"] .view:not(#v-log) .card:not(.hero) select,:root[data-look="light"] .view:not(#v-log) .card:not(.hero) input:not([type=checkbox]):not([type=radio]){background:rgba(255,255,255,.92);box-shadow:0 1px 3px rgba(30,60,80,.06)}
+:root[data-look="light"] .view:not(#v-log) .card:not(.hero) .seg{background:rgba(255,255,255,.5)}
+:root[data-look="light"] .view:not(#v-log) .card:not(.hero) .lbl{color:#3E5A56}
+:root[data-look="light"] .view:not(#v-log) h2{color:#0B5A51}
+:root[data-look="light"] .view:not(#v-log) .hero h2{color:#fff}
 </style>
 </head>
 <body>
@@ -897,6 +920,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
   <!-- FOOD -->
   <section class="view" id="v-food" hidden>
+    <div class="card hero">
     <div class="daynav">
       <button type="button" class="btn small ghost" id="dayPrev" aria-label="Previous day">‹</button>
       <div style="text-align:center;min-width:0"><h2 id="dayTitle">Today</h2><p class="note" id="daySub"></p></div>
@@ -904,6 +928,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
     </div>
     <div class="stats" id="dayStats"></div>
     <div class="btnrow"><button class="btn small ghost" type="button" id="shareDay">Share my day</button></div>
+    </div>
     <div id="shareBox" hidden></div>
     <div class="card" id="dayCal"></div>
     <div class="card goalcard">
@@ -936,8 +961,8 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
   <!-- HISTORY -->
   <section class="view" id="v-history" hidden>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2>Readings</h2>
+    <div class="card hero herorow">
+      <div><h2>Your readings</h2><p class="note">Every sugar level, dose and meal you've logged.</p></div>
       <div class="seg" role="group" aria-label="Chart range">
         <button type="button" id="r24" aria-pressed="false">24 h</button>
         <button type="button" id="r3" aria-pressed="true">3 days</button>
@@ -979,9 +1004,12 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
   <!-- SETTINGS -->
   <section class="view" id="v-settings" hidden>
-    <div class="seg wide" role="group" aria-label="Settings sections" style="grid-template-columns:1fr 1fr">
-      <button type="button" data-settab="profile" aria-pressed="true">Profile</button>
-      <button type="button" data-settab="app" aria-pressed="false">App settings</button>
+    <div class="card hero">
+      <div><h2>Settings</h2><p class="note">Your profile, devices and dose numbers.</p></div>
+      <div class="seg wide" role="group" aria-label="Settings sections" style="grid-template-columns:1fr 1fr">
+        <button type="button" data-settab="profile" aria-pressed="true">Profile</button>
+        <button type="button" data-settab="app" aria-pressed="false">App settings</button>
+      </div>
     </div>
     <div class="subview" id="setProfile">
     <h2>Your profile</h2>
@@ -2178,7 +2206,7 @@ function renderFood(){
     <div class="stat"><div class="lbl">Carbs</div><div class="v">${Math.round(total)}<span class="suffix"> g</span></div><div class="note">${meals} meal${meals===1?'':'s'}, ${groups.snack.length} snack${groups.snack.length===1?'':'s'}</div></div>
     <div class="stat"><div class="lbl">${esc(S.rapidName)}</div><div class="v">${fmtU(rapid)}<span class="suffix"> u</span></div><div class="note">rapid-acting</div></div>
     <div class="stat"><div class="lbl">In range</div><div class="v">${tir==null?'–':tir+'%'}</div><div class="note">${bgs.length} reading${bgs.length===1?'':'s'}${groups.hypo.length?`, ${groups.hypo.length} hypo${groups.hypo.length>1?'s':''}`:''}</div></div>
-    <div class="stat"><div class="lbl">Water</div><div class="v">${(wml/1000).toFixed(wml%1000?2:0).replace(/0$/,'')}<span class="suffix"> L</span></div><div class="note">${wml>=wgoal ? 'goal reached' : `of ${(wgoal/1000).toLocaleString('en-GB')} L goal`}</div></div>`;
+    <div class="stat"><div class="lbl">Water</div><div class="v">${+(wml/1000).toFixed(2)}<span class="suffix"> L</span></div><div class="note">${wml>=wgoal ? 'goal reached' : `of ${(wgoal/1000).toLocaleString('en-GB')} L goal`}</div></div>`;
 
   // day chart: sugar readings + carb bars across 24 h
   const W=520, H=170, Lp=30, R=8, T=10, B=24, yMax = Math.max(16, ...bgs.map(b=>b.bg))+1;
