@@ -523,6 +523,15 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .wcups i{flex:1;height:22px;border-radius:5px 5px 9px 9px;background:color-mix(in srgb,#38BDF8 14%,var(--line));transition:background .25s}
 .wcups i.on{background:linear-gradient(180deg,#7DD3FC,#2563EB)}
 .wadd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wgoalbtn{min-height:36px;padding:0 14px;font-size:.88rem;flex:none}
+.wpanel{display:grid;gap:10px;padding:14px;border-radius:14px;background:color-mix(in srgb,#38BDF8 8%,var(--surface));border:1px solid color-mix(in srgb,#38BDF8 25%,transparent)}
+.wpanel .lbl{font-weight:700;font-size:.9rem}
+.wchips{display:flex;flex-wrap:wrap;gap:8px}
+.wchip{font:600 .9rem var(--body);border:1px solid color-mix(in srgb,#2563EB 30%,transparent);background:var(--surface);color:var(--ink);border-radius:99px;padding:8px 14px;cursor:pointer;min-height:38px}
+.wchip[aria-pressed="true"]{background:#2563EB;color:#fff;border-color:#2563EB}
+.wrow{display:flex;align-items:center;gap:8px}
+.wrow input{flex:1;min-width:0}
+.wrow .wbtn{min-height:44px;padding:0 18px}
 .wbtn{font:700 .95rem var(--body);border:0;border-radius:12px;min-height:44px;padding:8px 12px;cursor:pointer;color:#1E40AF;background:color-mix(in srgb,#38BDF8 18%,var(--surface))}
 .wbtn span{font-weight:500;opacity:.75;font-size:.85em}
 :root[data-look="dark"] .wbtn{color:#BAE6FD;background:color-mix(in srgb,#38BDF8 16%,transparent)}
@@ -739,13 +748,25 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
       <div class="wtop">
         <div class="wico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z" fill="currentColor"/></svg></div>
         <div class="wtxt"><span class="tl">Water</span><span class="wamt" id="waterAmt"></span></div>
+        <button type="button" class="wbtn wgoalbtn" id="waterGoalBtn" aria-expanded="false">Goal</button>
         <button type="button" class="wbtn wminus" id="waterMinus" aria-label="Remove last drink">−</button>
       </div>
       <div class="wcups" id="waterCups" aria-hidden="true"></div>
+      <div class="wpanel" id="waterGoalPanel" hidden>
+        <span class="lbl">How much do you want to drink a day?</span>
+        <div class="wchips" id="waterGoalChips">
+          <button type="button" class="wchip" data-wgoal="1500">1.5 L</button>
+          <button type="button" class="wchip" data-wgoal="2000">2 L</button>
+          <button type="button" class="wchip" data-wgoal="2500">2.5 L</button>
+          <button type="button" class="wchip" data-wgoal="3000">3 L</button>
+        </div>
+        <div class="wrow"><input id="waterGoalIn" inputmode="numeric" placeholder="Or type your own" aria-label="Daily water goal in ml"><span class="suffix">ml</span><button type="button" class="wbtn" id="waterGoalSave">Set</button></div>
+      </div>
       <div class="wadd">
         <button type="button" class="wbtn" data-water="250">+ Glass <span>250 ml</span></button>
         <button type="button" class="wbtn" data-water="500">+ Bottle <span>500 ml</span></button>
       </div>
+      <div class="wrow wcustom"><input id="waterOtherIn" inputmode="numeric" placeholder="Custom amount" aria-label="Custom amount of water in ml"><span class="suffix">ml</span><button type="button" class="wbtn" id="waterOtherAdd">+ Add</button></div>
       <p class="note wnote" id="waterNote" hidden></p>
     </div>
 
@@ -3264,14 +3285,37 @@ function renderWater(){
   $('waterNote').textContent = note; $('waterNote').hidden = !note;
   $('waterCard').classList.toggle('done', ml >= goal);
 }
-document.querySelectorAll('[data-water]').forEach(b=>b.addEventListener('click', ()=>{
-  const k = dayId(Date.now()), ml = +b.dataset.water, before = waterOn(Date.now());
+function addWater(ml){
+  const k = dayId(Date.now()), before = waterOn(Date.now());
   (S.water[k] = S.water[k] || []).push(ml);
   for(const d of Object.keys(S.water)) if(Date.now() - new Date(d).getTime() > 400*DAY) delete S.water[d];
   save(); renderWater(); if(typeof renderFood==='function') renderFood();
   const goal = S.waterGoal || 2000;
   toast(before < goal && before+ml >= goal ? 'Water goal reached!' : `Added ${ml} ml of water`);
-}));
+}
+document.querySelectorAll('[data-water]').forEach(b=>b.addEventListener('click', ()=>addWater(+b.dataset.water)));
+function wPanel(which){
+  const g = $('waterGoalPanel');
+  g.hidden = !g.hidden; $('waterGoalBtn').setAttribute('aria-expanded', !g.hidden);
+  if(!g.hidden){ $('waterGoalIn').value = ''; markGoalChip() }
+}
+function markGoalChip(){ document.querySelectorAll('[data-wgoal]').forEach(c=>c.setAttribute('aria-pressed', +c.dataset.wgoal===(S.waterGoal||2000))) }
+function setWaterGoal(v){
+  if(v==null || v<500 || v>6000){ toast('Enter a goal between 500 and 6,000 ml'); return }
+  S.waterGoal = Math.round(v); save(); renderWater(); renderFood(); renderBody(); markGoalChip();
+  $('waterGoalPanel').hidden = true; $('waterGoalBtn').setAttribute('aria-expanded', false);
+  toast(`Water goal set to ${S.waterGoal.toLocaleString('en-GB')} ml a day`);
+}
+$('waterGoalBtn').onclick = ()=>wPanel('goal');
+document.querySelectorAll('[data-wgoal]').forEach(c=>c.onclick = ()=>setWaterGoal(+c.dataset.wgoal));
+$('waterGoalSave').onclick = ()=>setWaterGoal(num($('waterGoalIn').value));
+$('waterGoalIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('waterGoalSave').click() } });
+function addOther(v){
+  if(v==null || v<10 || v>3000){ toast('Enter an amount between 10 and 3,000 ml'); return }
+  addWater(Math.round(v)); $('waterOtherIn').value = ''; $('waterOtherIn').blur();
+}
+$('waterOtherAdd').onclick = ()=>addOther(num($('waterOtherIn').value));
+$('waterOtherIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('waterOtherAdd').click() } });
 $('waterMinus').addEventListener('click', ()=>{
   const k = dayId(Date.now()), arr = S.water[k];
   if(!arr || !arr.length) return;
