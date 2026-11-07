@@ -511,6 +511,28 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .sucard .row:has(> .field[hidden] + .field:not([hidden])),.sucard .row:has(> .field:not([hidden]) + .field[hidden]){grid-template-columns:1fr}
 .sufoot{text-align:center}
 .suerr{color:var(--low);font-weight:700}
+
+/* Water tracker */
+.watercard{display:grid;gap:12px}
+.wtop{display:flex;align-items:center;gap:12px}
+.wico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#38BDF8,#2563EB);flex:none}
+.wtxt{display:grid;gap:2px;flex:1;min-width:0}
+.wtxt .tl{font:700 .78rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.wamt{font:800 1.3rem/1.1 var(--body)}
+.wcups{display:flex;gap:6px}
+.wcups i{flex:1;height:22px;border-radius:5px 5px 9px 9px;background:color-mix(in srgb,#38BDF8 14%,var(--line));transition:background .25s}
+.wcups i.on{background:linear-gradient(180deg,#7DD3FC,#2563EB)}
+.wadd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wbtn{font:700 .95rem var(--body);border:0;border-radius:12px;min-height:44px;padding:8px 12px;cursor:pointer;color:#1E40AF;background:color-mix(in srgb,#38BDF8 18%,var(--surface))}
+.wbtn span{font-weight:500;opacity:.75;font-size:.85em}
+:root[data-look="dark"] .wbtn{color:#BAE6FD;background:color-mix(in srgb,#38BDF8 16%,transparent)}
+.wminus{min-height:36px;width:36px;padding:0;font-size:1.3rem;line-height:1;flex:none}
+.wminus:disabled{opacity:.35;cursor:default}
+.wnote{margin:0}
+.watercard.done .wamt{color:#2563EB}
+:root[data-look="dark"] .watercard.done .wamt{color:#7DD3FC}
+#dayStats{grid-template-columns:repeat(4,1fr)}
+@media (max-width:520px){#dayStats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -711,6 +733,20 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
     <div class="card calcard" id="calCard">
       <button type="button" class="calmain" id="calMain" aria-label="Today. Open your overview"></button>
+    </div>
+
+    <div class="card watercard" id="waterCard">
+      <div class="wtop">
+        <div class="wico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z" fill="currentColor"/></svg></div>
+        <div class="wtxt"><span class="tl">Water</span><span class="wamt" id="waterAmt"></span></div>
+        <button type="button" class="wbtn wminus" id="waterMinus" aria-label="Remove last drink">−</button>
+      </div>
+      <div class="wcups" id="waterCups" aria-hidden="true"></div>
+      <div class="wadd">
+        <button type="button" class="wbtn" data-water="250">+ Glass <span>250 ml</span></button>
+        <button type="button" class="wbtn" data-water="500">+ Bottle <span>500 ml</span></button>
+      </div>
+      <p class="note wnote" id="waterNote" hidden></p>
     </div>
 
     <div class="card entry">
@@ -947,6 +983,11 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
         <div class="goalset"><input id="sCal" inputmode="numeric" placeholder="No goal"><span class="suffix">kcal a day</span></div>
         <p class="note">Clear the box to turn the goal off. Not sure what to aim for? Ask your diabetes team or a dietitian, and never skip insulin to lose weight.</p>
       </div>
+      <div class="field">
+        <label class="lbl" for="sWater">Daily water goal</label>
+        <div class="goalset"><input id="sWater" inputmode="numeric" placeholder="2000"><span class="suffix">ml a day</span></div>
+        <p class="note">About 2,000 ml (8 glasses) suits most adults. Drink more in hot weather, when exercising, or when your sugar is high.</p>
+      </div>
       <button class="btn" id="saveBody" type="button">Save profile</button>
     </div>
     </div>
@@ -1166,6 +1207,7 @@ function exampleEntries(){
   })).filter(e=>e.t<=now);
 }
 const defaults = {
+  water:{}, waterGoal:2000,
   unit:'mmol', rapidName:'NovoRapid', longName:'Lantus',
   target:6, correctAbove:10, isf:3, icr:10, dur:4, inc:0.5, red:{light:25, moderate:50, hard:75},
   confirmed:false, foods:[], lastImport:null, theme:'system', calGoalOn:false, calGoal:0, area:'', country:'', pump:'', sensor:'', setup:'cgm', lastPumpImport:null, heightCm:null, weightKg:null, bodyUnit:'metric', name:'', onboarded:false, goal:'steady', entries: exampleEntries()
@@ -2104,10 +2146,12 @@ function renderFood(){
   const rapid = es.reduce((s,e)=>s+(e.rapid||0), 0);
   const bgs = es.filter(e=>e.bg!=null);
   const tir = bgs.length ? Math.round(bgs.filter(e=>e.bg>=HYPO && e.bg<=HIGH).length/bgs.length*100) : null;
+  const wml = waterOn(start), wgoal = S.waterGoal || 2000;
   $('dayStats').innerHTML = `
     <div class="stat"><div class="lbl">Carbs</div><div class="v">${Math.round(total)}<span class="suffix"> g</span></div><div class="note">${meals} meal${meals===1?'':'s'}, ${groups.snack.length} snack${groups.snack.length===1?'':'s'}</div></div>
     <div class="stat"><div class="lbl">${esc(S.rapidName)}</div><div class="v">${fmtU(rapid)}<span class="suffix"> u</span></div><div class="note">rapid-acting</div></div>
-    <div class="stat"><div class="lbl">In range</div><div class="v">${tir==null?'–':tir+'%'}</div><div class="note">${bgs.length} reading${bgs.length===1?'':'s'}${groups.hypo.length?`, ${groups.hypo.length} hypo${groups.hypo.length>1?'s':''}`:''}</div></div>`;
+    <div class="stat"><div class="lbl">In range</div><div class="v">${tir==null?'–':tir+'%'}</div><div class="note">${bgs.length} reading${bgs.length===1?'':'s'}${groups.hypo.length?`, ${groups.hypo.length} hypo${groups.hypo.length>1?'s':''}`:''}</div></div>
+    <div class="stat"><div class="lbl">Water</div><div class="v">${(wml/1000).toFixed(wml%1000?2:0).replace(/0$/,'')}<span class="suffix"> L</span></div><div class="note">${wml>=wgoal ? 'goal reached' : `of ${(wgoal/1000).toLocaleString('en-GB')} L goal`}</div></div>`;
 
   // day chart: sugar readings + carb bars across 24 h
   const W=520, H=170, Lp=30, R=8, T=10, B=24, yMax = Math.max(16, ...bgs.map(b=>b.bg))+1;
@@ -2610,7 +2654,7 @@ function bodyError(b, required){
   if(b.w!=null && (b.w<20 || b.w>300)) return 'Check your weight. It looks out of range.';
   return '';
 }
-function renderBody(){ fillBody('s', S.bodyUnit, S.heightCm, S.weightKg); $('sName').value = S.name || ''; $('sArea').value = S.area || ''; $('sCountry').value = userCountry(); if(document.activeElement!==$('sCal')) $('sCal').value = S.calGoalOn && S.calGoal ? S.calGoal : '' }
+function renderBody(){ if(document.activeElement !== $('sWater')) $('sWater').value = S.waterGoal || 2000; fillBody('s', S.bodyUnit, S.heightCm, S.weightKg); $('sName').value = S.name || ''; $('sArea').value = S.area || ''; $('sCountry').value = userCountry(); if(document.activeElement!==$('sCal')) $('sCal').value = S.calGoalOn && S.calGoal ? S.calGoal : '' }
 function renderSettings(){
   renderBody();
   $('sGoal').value = goalKey(); $('sGoalNote').innerHTML = goalNoteHTML(goalKey());
@@ -2625,7 +2669,7 @@ function renderSettings(){
 }
 
 function renderAll(){
-  L = learn();
+  L = learn(); renderWater();
   $('fUnit').value = S.unit;
   $('fBg').placeholder = S.unit==='mgdl' ? 'e.g. 115' : 'e.g. 6.4';
   $('fRapidType').value = S.rapidName; $('fLongType').value = S.longName;
@@ -3194,11 +3238,46 @@ $('saveBody').onclick = ()=>{
   if(err){ toast(err); return }
   const kc = num($('sCal').value);
   if($('sCal').value.trim()!=='' && (kc==null || kc<800 || kc>6000)){ toast('Enter a daily calorie goal between 800 and 6,000 kcal, or clear it'); return }
+  const wg = num($('sWater').value);
+  if($('sWater').value.trim()!=='' && (wg==null || wg<500 || wg>6000)){ toast('Enter a daily water goal between 500 and 6,000 ml'); return }
+  S.waterGoal = wg ? Math.round(wg) : 2000;
   if(kc){ S.calGoal = Math.round(kc); S.calGoalOn = true } else S.calGoalOn = false;
   S.name = $('sName').value.trim(); S.country = $('sCountry').value; S.area = $('sArea').value.trim().slice(0,60); S.heightCm = b.h || null; S.weightKg = b.w || null;
-  save(); renderBody(); renderPreview(); renderCalCard(); renderFood(); toast('Profile saved');
+  save(); renderBody(); renderPreview(); renderCalCard(); renderWater(); renderFood(); toast('Profile saved');
 };
 (function(){ const opts = COUNTRY_CODES.map(c=>[c, countryName(c)]).sort((a,b)=>a[1].localeCompare(b[1], 'en')); $('sCountry').innerHTML = opts.map(([c,n])=>`<option value="${c}">${esc(n)}</option>`).join('') })();
+
+/* ---------- Water ---------- */
+function dayId(t){ const d = new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0') }
+function waterOn(t){ const w = S.water && S.water[dayId(t)]; return w ? w.reduce((a,b)=>a+b,0) : 0 }
+function renderWater(){
+  const ml = waterOn(Date.now()), goal = S.waterGoal || 2000, cups = Math.max(4, Math.round(goal/250)), full = Math.min(cups, Math.floor(ml/250 + 0.001));
+  const fmt = n => n.toLocaleString('en-GB');
+  $('waterAmt').innerHTML = `${fmt(ml)} <span class="suffix">/ ${fmt(goal)} ml</span>`;
+  $('waterCups').innerHTML = Array.from({length:cups}, (_,i)=>`<i class="${i<full?'on':''}"></i>`).join('');
+  $('waterMinus').disabled = !ml;
+  const last = S.entries.filter(e=>e.bg!=null && e.t<=Date.now()).sort((a,b)=>b.t-a.t)[0];
+  const highNow = last && Date.now()-last.t < 3*HR && last.bg > HIGH;
+  let note = '';
+  if(ml >= goal) note = 'Goal reached. Nice work staying hydrated.';
+  else if(highNow) note = 'Your sugar is high. Drinking water helps your body clear the extra sugar, so keep sipping.';
+  $('waterNote').textContent = note; $('waterNote').hidden = !note;
+  $('waterCard').classList.toggle('done', ml >= goal);
+}
+document.querySelectorAll('[data-water]').forEach(b=>b.addEventListener('click', ()=>{
+  const k = dayId(Date.now()), ml = +b.dataset.water, before = waterOn(Date.now());
+  (S.water[k] = S.water[k] || []).push(ml);
+  for(const d of Object.keys(S.water)) if(Date.now() - new Date(d).getTime() > 400*DAY) delete S.water[d];
+  save(); renderWater(); if(typeof renderFood==='function') renderFood();
+  const goal = S.waterGoal || 2000;
+  toast(before < goal && before+ml >= goal ? 'Water goal reached!' : `Added ${ml} ml of water`);
+}));
+$('waterMinus').addEventListener('click', ()=>{
+  const k = dayId(Date.now()), arr = S.water[k];
+  if(!arr || !arr.length) return;
+  const ml = arr.pop(); if(!arr.length) delete S.water[k];
+  save(); renderWater(); renderFood(); toast(`Removed ${ml} ml`);
+});
 /* ---------- Sugar Wrapped ---------- */
 let wrapDays = 7, wrapDl = null;
 const WCOL = ['#0E6F64','#6A4BC4','#B36A08','#BF3329','#3B5BB5','#1C8456'];
