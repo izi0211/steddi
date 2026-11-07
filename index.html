@@ -180,7 +180,8 @@ h1 span{color:var(--accent)}
 .logo{width:36px;height:36px;flex:none;border-radius:9px}
 .logo text{font-family:Inter,system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:30px;font-weight:800;fill:#fff}
 .logo text tspan{fill:#B8F5DE}
-.logo{box-shadow:0 4px 12px rgba(14,111,100,.3)}
+.logo{box-shadow:0 4px 12px rgba(0,0,0,.2)}
+:root[data-look="dark"] .logo{box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .tagline{margin:0;font:700 .72rem/1 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 h2{font:600 1.15rem/1.2 var(--display);margin:0;text-wrap:balance}
 h3{font:700 .95rem/1.3 var(--body);margin:0}
@@ -552,7 +553,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
 <div id="signup" class="signup" hidden>
   <div class="wrap">
-    <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="lgT1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E6F64"/><stop offset=".55" stop-color="#178C7E"/><stop offset="1" stop-color="#3E6FC9"/></linearGradient></defs><rect width="100" height="100" rx="23" fill="url(#lgT1)"/><text x="50" y="58" text-anchor="middle">T1<tspan>D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#B8F5DE" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
+    <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="lgT1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E6F64"/><stop offset=".55" stop-color="#178C7E"/><stop offset="1" stop-color="#3E6FC9"/></linearGradient></defs><rect width="100" height="100" rx="23" fill="#111"/><text x="50" y="58" text-anchor="middle">T1<tspan>D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#B8F5DE" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
     <div class="suprog" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
     <form id="signupForm" autocomplete="off" novalidate>
       <section class="sustep" data-sustep="1">
@@ -685,7 +686,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 </div>
 
 <header><div class="wrap">
-  <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="lgT2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E6F64"/><stop offset=".55" stop-color="#178C7E"/><stop offset="1" stop-color="#3E6FC9"/></linearGradient></defs><rect width="100" height="100" rx="23" fill="url(#lgT2)"/><text x="50" y="58" text-anchor="middle">T1<tspan>D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#B8F5DE" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
+  <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="lgT2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E6F64"/><stop offset=".55" stop-color="#178C7E"/><stop offset="1" stop-color="#3E6FC9"/></linearGradient></defs><rect width="100" height="100" rx="23" fill="#111"/><text x="50" y="58" text-anchor="middle">T1<tspan>D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#B8F5DE" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
   <span id="aiChip" hidden></span>
   <button type="button" class="themebtn" id="themeBtn" aria-label="Switch to light mode"></button>
 </div></header>
