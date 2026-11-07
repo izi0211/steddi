@@ -1,9 +1,9 @@
-// Steddi AI server. Keeps the Claude API key secret on the server.
+// T1Dy AI server. Keeps the Claude API key secret on the server.
 // Set ANTHROPIC_API_KEY in Netlify: Project configuration > Environment variables.
 // Check it works by opening /api/ai?test=1 in a browser.
 const MODELS_QUICK = ['claude-haiku-5-5', 'claude-haiku-4-5'];
 const MODELS_FULL  = ['claude-sonnet-5-5', 'claude-sonnet-4-5', 'claude-haiku-4-5'];
-const SYSTEM = 'You power the features of Steddi, a UK app for people with type 1 diabetes. Follow the instructions in each request exactly. Never tell the person how much insulin to take.';
+const SYSTEM = 'You power the features of T1Dy, a UK app for people with type 1 diabetes. Follow the instructions in each request exactly. Never tell the person how much insulin to take.';
 
 async function ask(key, models, content, maxTokens) {
   let last = { status: 500, error: 'unknown', detail: '' };

@@ -6,13 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Steddi">
-<meta name="theme-color" content="#0E6F64">
+<meta name="apple-mobile-web-app-title" content="T1Dy">
+<meta name="theme-color" content="#111111">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <script src="shim.js"></script>
-<title>Steddi</title>
+<title>T1Dy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
 <style>
@@ -178,6 +178,11 @@ h1 span{color:var(--accent)}
 .brand{display:grid;gap:3px}
 .brandrow{display:flex;align-items:center;gap:10px}
 .logo{width:36px;height:36px;flex:none;border-radius:9px}
+.brand h1 span,:root[data-look="light"] .brand h1 span{color:#16A34A;background:none;-webkit-text-fill-color:currentColor}
+:root[data-look="dark"] .brand h1 span{color:#3DE07A}
+.logo text{font-family:Inter,system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:30px;font-weight:800;fill:#fff}
+.logo text tspan{fill:#3DE07A}
+:root[data-look="dark"] .logo{box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .tagline{margin:0;font:700 .72rem/1 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 h2{font:600 1.15rem/1.2 var(--display);margin:0;text-wrap:balance}
 h3{font:700 .95rem/1.3 var(--body);margin:0}
@@ -549,11 +554,11 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 
 <div id="signup" class="signup" hidden>
   <div class="wrap">
-    <div class="brandrow"><svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14A08E"/><stop offset="1" stop-color="#6A4BC4"/></linearGradient></defs><rect width="512" height="512" rx="116" fill="url(#lg0)"/><path d="M256 78C256 78 120 236 120 318a136 136 0 0 0 272 0C392 236 256 78 256 78Z" fill="#fff"/><path d="M168 322q22-26 44 0t44 0t44 0t44 0" fill="none" stroke="#0E6F64" stroke-width="20" stroke-linecap="round"/></svg><div class="brand"><h1>Stedd<span>i</span></h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
+    <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="23" fill="#111"/><text x="50" y="58" text-anchor="middle" font-family="Inter,system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="30" letter-spacing="-1" fill="#fff">T1<tspan fill="#3DE07A">D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#3DE07A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
     <div class="suprog" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
     <form id="signupForm" autocomplete="off" novalidate>
       <section class="sustep" data-sustep="1">
-        <div class="suhead"><span class="sukick">Step 1 of 3</span><h2 class="su-title">Welcome to Steddi</h2>
+        <div class="suhead"><span class="sukick">Step 1 of 3</span><h2 class="su-title">Welcome to T1Dy</h2>
           <p class="note">Tell us how you manage your diabetes so advice fits you.</p></div>
         <div class="card sucard">
           <div class="field"><label class="lbl" for="uName">First name</label><input id="uName" placeholder="Optional" autocomplete="given-name"></div>
@@ -606,7 +611,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
       </section>
       <section class="sustep" data-sustep="3" hidden>
         <div class="suhead"><span class="sukick">Step 3 of 3</span><h2 class="su-title">Your insulin numbers</h2>
-          <p class="note">From your diabetes team. They let Steddi work out your dose. Not sure? Skip and add them later in Settings.</p></div>
+          <p class="note">From your diabetes team. They let T1Dy work out your dose. Not sure? Skip and add them later in Settings.</p></div>
         <div class="card sucard">
           
         <div class="row">
@@ -682,7 +687,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 </div>
 
 <header><div class="wrap">
-  <div class="brandrow"><svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14A08E"/><stop offset="1" stop-color="#6A4BC4"/></linearGradient></defs><rect width="512" height="512" rx="116" fill="url(#lg1)"/><path d="M256 78C256 78 120 236 120 318a136 136 0 0 0 272 0C392 236 256 78 256 78Z" fill="#fff"/><path d="M168 322q22-26 44 0t44 0t44 0t44 0" fill="none" stroke="#0E6F64" stroke-width="20" stroke-linecap="round"/></svg><div class="brand"><h1>Stedd<span>i</span></h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
+  <div class="brandrow"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="23" fill="#111"/><text x="50" y="58" text-anchor="middle" font-family="Inter,system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="30" letter-spacing="-1" fill="#fff">T1<tspan fill="#3DE07A">D</tspan>y</text><path d="M40 72l6 6 13-13" stroke="#3DE07A" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="brand"><h1>T1<span>D</span>y</h1><p class="tagline">Type 1 Diabetes Tracker</p></div></div>
   <span id="aiChip" hidden></span>
   <button type="button" class="themebtn" id="themeBtn" aria-label="Switch to light mode"></button>
 </div></header>
@@ -1092,7 +1097,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
       <button class="btn" id="saveSettings" type="button">Save settings</button>
     </div>
     <p class="disclaimer"><b>About AI:</b> meal, snack and hypo suggestions and the review on Insights are made by AI (Claude) and are labelled ✦ AI. AI can make mistakes, so check anything that looks wrong. Insulin doses are never set by AI. They're calculated from your diabetes team's numbers below. If AI isn't available, the app falls back to its built-in suggestions.</p>
-    <p class="disclaimer">Steddi is a prototype and not a medical device. Suggestions follow general UK guidance and your own team's numbers. Always follow your diabetes team's advice. For a severe hypo, or if someone can't swallow or is unconscious, call 999. Your data is stored only in this browser.</p>
+    <p class="disclaimer">T1Dy is a prototype and not a medical device. Suggestions follow general UK guidance and your own team's numbers. Always follow your diabetes team's advice. For a severe hypo, or if someone can't swallow or is unconscious, call 999. Your data is stored only in this browser.</p>
     </div>
   </section>
 </main>
@@ -1870,7 +1875,7 @@ async function requestRestAI(ctx, sig){
   if(!aiFn) return;
   if(restCtl) restCtl.abort();
   const ctl = restCtl = new AbortController(); restInflight = sig;
-  const prompt = `You are the eating-out feature inside Steddi, an app for people with type 1 diabetes. Suggest ONE restaurant option for this person's ${SLOTNAME[ctx.slot]} right now.
+  const prompt = `You are the eating-out feature inside T1Dy, an app for people with type 1 diabetes. Suggest ONE restaurant option for this person's ${SLOTNAME[ctx.slot]} right now.
 
 ${situation(ctx, `Meal they're about to have: ${SLOTNAME[ctx.slot]}\nWhere they live: ${placeText()}`)}
 
@@ -2282,7 +2287,7 @@ async function requestMealAI(ctx, sig){
   if(mealAICtl) mealAICtl.abort();
   const ctl = mealAICtl = new AbortController(); mealAIInflight = sig;
   const cands = mealCands(ctx.slot);
-  const prompt = `You are the meal-suggestion feature inside Steddi, a UK app for people with type 1 diabetes. Choose the best meals for this person right now, using ONLY the candidate list.
+  const prompt = `You are the meal-suggestion feature inside T1Dy, a UK app for people with type 1 diabetes. Choose the best meals for this person right now, using ONLY the candidate list.
 
 ${situation(ctx, ctx.slot ? `Meal they're about to have: ${SLOTNAME[ctx.slot]}` : '')}
 
@@ -2322,7 +2327,7 @@ ${GOAL_GUIDE[goalKey()]}`;
 - These are fast-acting hypo treatments (about 15–20 g sugar each).
 - Rank first the ones that brought this person back above ${show(HYPO)} ${uLabel()} within about 15 minutes, then the ones they use most.
 - If blood sugar is under ${show(HYPO)} ${uLabel()}, the tip must tell them to recheck in 10–15 minutes and treat again if still low.`;
-  return `You are the ${what.replace(/s$/,'')}-suggestion feature inside Steddi, a UK app for people with type 1 diabetes. Pick the 3 best ${what} for this person right now, using ONLY the candidate list.
+  return `You are the ${what.replace(/s$/,'')}-suggestion feature inside T1Dy, a UK app for people with type 1 diabetes. Pick the 3 best ${what} for this person right now, using ONLY the candidate list.
 
 ${situation(ctx)}
 
@@ -2388,7 +2393,7 @@ async function runAIReview(){
     `Insulin: ${S.rapidName} (rapid), ${S.longName} (long-acting). Units: ${uLabel()}.`
   ].join('\n\n').slice(0, 9000);
   try{
-    await aiFn(`You are the review feature inside Steddi, a UK app for people with type 1 diabetes. Write a short, friendly review of this person's last 14 days for them to read.
+    await aiFn(`You are the review feature inside T1Dy, a UK app for people with type 1 diabetes. Write a short, friendly review of this person's last 14 days for them to read.
 
 ${data}
 
@@ -3400,7 +3405,7 @@ async function drawWrapCard(st){
     x.font = `800 ${v.length>18 ? 64 : 84}px ${D}`; y = wrapText(x, v, 90, y + 84, W-180, 80) + 40;
   }
   if(st.badges.length && y < H-320){ x.font = `700 38px ${B}`; for(const b of st.badges.slice(0,2)){ x.fillText('★ ' + b.split(':')[0], 90, y); y += 56 } }
-  x.font = `800 52px ${D}`; x.fillText('Steddi', 90, H-150);
+  x.font = `800 52px ${D}`; x.fillText('T1Dy', 90, H-150);
   x.globalAlpha = .75; x.font = `700 32px ${B}`; x.fillText('Type 1 Diabetes Tracker', 90, H-100); x.globalAlpha = 1;
   $('wrapImg').src = c.toDataURL('image/png');
   $('wrapImg').dataset.ready = '1';
@@ -3478,7 +3483,7 @@ $('shareDay').onclick = ()=>{
   if(food.length) lines.push(`Ate: ${food.map(e=>`${e.food} (${fmtTime(e.t)})`).join(', ')}`);
   lines.push(`Carbs: ${Math.round(n.c)} g · Calories: about ${Math.round(n.kcal)} kcal`);
   const ins = es.reduce((a,e)=>a+(e.rapid||0),0); if(ins) lines.push(`${S.rapidName}: ${fmtU(ins)} units`);
-  lines.push('Sent from Steddi');
+  lines.push('Sent from T1Dy');
   copyBox($('shareBox'), lines.join('\n'));
 };
 document.addEventListener('click', ev=>{
@@ -3547,7 +3552,7 @@ $('signupForm').addEventListener('submit', ev=>{
   S.onboarded = true; save();
   $('signup').hidden = true; document.body.style.overflow = '';
   renderAll(); window.scrollTo(0,0);
-  toast(S.name ? `Welcome, ${S.name}` : 'Welcome to Steddi');
+  toast(S.name ? `Welcome, ${S.name}` : 'Welcome to T1Dy');
 });
 $('uUnit').addEventListener('change', ()=>{ document.querySelectorAll('.uu').forEach(el=>el.textContent = $('uUnit').value==='mgdl' ? 'mg/dL' : 'mmol/L') });
 $('uGoal').onchange = ()=>{ $('uGoalNote').innerHTML = goalNoteHTML($('uGoal').value) };

@@ -1,6 +1,6 @@
-# Steddi – test app setup
+# T1Dy – test app setup
 
-Steddi installs on an iPhone home screen and runs full screen like a normal app.
+T1Dy installs on an iPhone home screen and runs full screen like a normal app.
 The AI features (meal photos, suggestions) run through a small server on Netlify that holds your Claude API key, so the key is never visible in the app.
 
 ## 1. Get a Claude API key
@@ -25,11 +25,11 @@ The AI features (meal photos, suggestions) run through a small server on Netlify
 ## 4. Add it to an iPhone
 1. Open the link in **Safari**.
 2. Tap Share, then **Add to Home Screen**, then Add.
-3. Open Steddi from the home screen icon.
+3. Open T1Dy from the home screen icon.
 
 ## Good to know
 - Each person's data stays on their own phone. Deleting the app from the home screen deletes their data.
 - Anyone with the link can use the AI, which spends your credit. Only share the link with testers, and keep the spend limit on.
 - Without the API key the app still works, using its own built-in suggestions; photo carbs need the key.
 - To update the app, replace the files on GitHub. Netlify redeploys automatically.
-- Steddi is a prototype, not a medical device.
+- T1Dy is a prototype, not a medical device.
