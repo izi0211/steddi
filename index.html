@@ -624,6 +624,13 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .upopt:has(input:checked) .upwhere{color:rgba(255,255,255,.85)}
 .upopt:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
 :root[data-look="light"] .upopt:not(:has(input:checked)){background:rgba(255,255,255,.9)}
+
+.drivelink{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:48px}
+.drivelink span:nth-child(2){flex:1}
+.drivelink span:last-child{font-size:1.4rem;color:var(--muted)}
+:root[data-look="light"] .card.drivecard.low{background:linear-gradient(135deg,#B91C1C,#DC2626 55%,#C2410C)}
+:root[data-look="dark"] .drivecard.low{border-color:#DC2626}
+[data-sunit] .suffix{display:block;font-size:.78rem;font-weight:500;opacity:.75}
 </style>
 </head>
 <body>
@@ -864,7 +871,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
       <button type="button" class="calmain" id="calMain" aria-label="Today. Open your overview"></button>
     </div>
 
-    <button type="button" class="card drivecard" id="driveCard" aria-haspopup="dialog">
+    <button type="button" class="card drivecard" id="driveCard" aria-haspopup="dialog" hidden>
       <span class="dico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17v2M18 17v2M4 13l2-6a2 2 0 0 1 2-1.4h8A2 2 0 0 1 18 7l2 6v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg></span>
       <span class="dtxt"><b id="driveTitle">Driving? Check you're 5 to drive</b><span id="driveSub">UK DVLA rules, done for you</span></span>
       <span class="dgo" aria-hidden="true">›</span>
@@ -964,6 +971,7 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
             <select id="fHypoSel"></select>
             <div id="hypoInfo" class="hypoinfo" hidden></div>
           </div>
+          <button type="button" class="drivelink" id="hypoDrive"><span aria-hidden="true">🚗</span><span><b>Driving soon?</b> Check you're 5 to drive</span><span aria-hidden="true">›</span></button>
         </div>
 
         <div class="row" data-show="meal snack hypo">
@@ -1151,6 +1159,14 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
         <button type="button" data-apptheme="dark" aria-pressed="false">Dark</button>
         <button type="button" data-apptheme="system" aria-pressed="true">Match phone</button>
       </div>
+    </div>
+    <h2>Blood sugar units</h2>
+    <div class="card">
+      <div class="seg wide" role="group" aria-label="Blood sugar units" style="grid-template-columns:1fr 1fr">
+        <button type="button" data-sunit="mmol" aria-pressed="true">mmol/L <span class="suffix">e.g. 5.6</span></button>
+        <button type="button" data-sunit="mgdl" aria-pressed="false">mg/dL <span class="suffix">e.g. 100</span></button>
+      </div>
+      <p class="note">Pick the units your meter or sensor shows. Your readings and dose numbers convert automatically. You can also switch on the Log page.</p>
     </div>
     <h2>My devices</h2>
     <div class="card">
@@ -2822,7 +2838,7 @@ function renderSettings(){
 
 function renderAll(){
   L = learn(); renderWater(); renderDriveCard();
-  $('fUnit').value = S.unit;
+  $('fUnit').value = S.unit; if(typeof syncSetUnit==='function') syncSetUnit();
   $('fBg').placeholder = S.unit==='mgdl' ? 'e.g. 115' : 'e.g. 6.4';
   $('fRapidType').value = S.rapidName; $('fLongType').value = S.longName;
   $('exampleBanner').hidden = !S.entries.some(e=>e.example);
@@ -2885,7 +2901,9 @@ document.querySelectorAll('.ins-type').forEach(sel=>sel.onchange=()=>{
   if(sel.dataset.kind==='rapid') S.rapidName = sel.value; else S.longName = sel.value;
   save(); renderAll(); toast(sel.value + ' selected');
 });
-$('fUnit').onchange = e=>{ S.unit = e.target.value; save(); kBgTouched = false; renderAll(); toast('Showing ' + uLabel()) };
+$('fUnit').onchange = e=>{ S.unit = e.target.value; save(); kBgTouched = false; renderAll(); syncSetUnit(); toast('Showing ' + uLabel()) };
+function syncSetUnit(){ document.querySelectorAll('[data-sunit]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.sunit===S.unit)) }
+document.querySelectorAll('[data-sunit]').forEach(b=>b.addEventListener('click', ()=>{ if(S.unit===b.dataset.sunit) return; $('fUnit').value = b.dataset.sunit; $('fUnit').onchange({target:$('fUnit')}) }));
 ['fBg','fCarbs','fMins','fTime'].forEach(id=>$(id).addEventListener('input', renderPreview));
 ['fAct','fMins'].forEach(id=>$(id).addEventListener('change', renderPreview));
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setLogMode(b.dataset.mode));
@@ -3409,13 +3427,19 @@ function driveState(){
   if(d.active && d.last){ const left = d.last + TRIP_MS - now; return {k: left>0 ? 'trip' : 'due', left} }
   return {k:'idle'};
 }
+function lowNow(){
+  const typed = num($('fBg') && $('fBg').value);
+  if(typed!=null){ const v = toMmol(typed); if(v>0.5) return v < DRIVE_MIN ? v : null }
+  const last = S.entries.filter(e=>e.bg!=null && !e.example && e.t<=Date.now()).sort((a,b)=>b.t-a.t)[0];
+  return last && Date.now()-last.t < 3*3600000 && last.bg < DRIVE_MIN ? last.bg : null;
+}
 function renderDriveCard(){
-  const st = driveState(), card=$('driveCard');
-  card.classList.toggle('due', st.k==='due'); card.classList.toggle('wait', st.k==='wait'); card.classList.toggle('trip', st.k==='trip');
-  if(st.k==='trip'){ $('driveTitle').textContent = `On a drive · next check in ${fmtLeft(st.left)}`; $('driveSub').textContent = 'Tap to check again or end your drive' }
-  else if(st.k==='due'){ $('driveTitle').textContent = 'Drive check due now'; $('driveSub').textContent = 'Pull over safely and check your sugar' }
-  else if(st.k==='wait'){ $('driveTitle').textContent = `Don't drive yet · ${fmtLeft(st.left)} to wait`; $('driveSub').textContent = '45-minute wait after a low' }
-  else { $('driveTitle').textContent = "Driving? Check you're 5 to drive"; $('driveSub').textContent = 'UK DVLA rules, done for you' }
+  const st = driveState(), card=$('driveCard'), low = lowNow();
+  card.classList.toggle('due', st.k==='due'); card.classList.toggle('wait', st.k==='wait'); card.classList.toggle('low', low!=null && st.k!=='due');
+  if(st.k==='due'){ card.hidden=false; $('driveTitle').textContent = 'Drive check due now'; $('driveSub').textContent = 'Pull over safely and check your sugar' }
+  else if(st.k==='wait'){ card.hidden=false; $('driveTitle').textContent = `Don't drive yet · ${fmtLeft(st.left)} to wait`; $('driveSub').textContent = '45-minute wait after a low' }
+  else if(low!=null){ card.hidden=false; $('driveTitle').textContent = `Under 5: don't drive`; $('driveSub').textContent = `You're ${show(low)} ${uLabel()}. Tap to see what to do before driving` }
+  else card.hidden=true;
 }
 function dvShow(){
   $('dvUnit').textContent = uLabel(); $('dvBg').placeholder = S.unit==='mgdl' ? 'e.g. 112' : 'e.g. 6.2';
@@ -3472,6 +3496,8 @@ $('dvCheck').addEventListener('click', ()=>{
 });
 $('dvBg').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('dvCheck').click() } });
 $('driveCard').addEventListener('click', dvShow);
+$('hypoDrive').addEventListener('click', dvShow);
+$('fBg').addEventListener('input', ()=>renderDriveCard());
 $('dvClose').addEventListener('click', dvHide);
 $('drive').addEventListener('keydown', e=>{ if(e.key==='Escape') dvHide() });
 let dvLastState = null;
