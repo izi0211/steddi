@@ -610,6 +610,20 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 .dvcard .bg-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
 .dvcard .bg-row .suffix{font-weight:600}
 .dvcard .bg-row .btn{grid-column:1/-1}
+
+/* Sign-up unit picker */
+.unitpick{border:0;margin:0;padding:0;min-width:0}
+.unitpick legend{padding:0;margin-bottom:8px}
+.upgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upopt{position:relative;display:grid;gap:2px;padding:14px;border-radius:16px;cursor:pointer;background:var(--surface);border:2px solid var(--line);transition:border-color .15s,box-shadow .15s}
+.upopt input{position:absolute;opacity:0;pointer-events:none}
+.upnum{font:800 1.7rem/1.1 var(--mono, ui-monospace),monospace}
+.upname{font-weight:700}
+.upwhere{font-size:.8rem;color:var(--muted);line-height:1.3}
+.upopt:has(input:checked){border-color:transparent;color:#fff;background:linear-gradient(135deg,#0E6F64,#178C7E 55%,#3E6FC9);box-shadow:0 8px 20px rgba(20,110,110,.28)}
+.upopt:has(input:checked) .upwhere{color:rgba(255,255,255,.85)}
+.upopt:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+:root[data-look="light"] .upopt:not(:has(input:checked)){background:rgba(255,255,255,.9)}
 </style>
 </head>
 <body>
@@ -656,6 +670,15 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
           <p class="note">Tell us how you manage your diabetes so advice fits you.</p></div>
         <div class="card sucard">
           <div class="field"><label class="lbl" for="uName">First name</label><input id="uName" placeholder="Optional" autocomplete="given-name"></div>
+          <fieldset class="field unitpick">
+            <legend class="lbl">Which units does your meter or sensor show?</legend>
+            <div class="upgrid" role="radiogroup">
+              <label class="upopt"><input type="radio" name="uUnitPick" value="mmol"><span class="upnum">5.6</span><span class="upname">mmol/L</span><span class="upwhere">UK, Europe, Canada, Australia</span></label>
+              <label class="upopt"><input type="radio" name="uUnitPick" value="mgdl"><span class="upnum">100</span><span class="upname">mg/dL</span><span class="upwhere">USA and some other countries</span></label>
+            </div>
+            <select id="uUnit" hidden aria-hidden="true" tabindex="-1"><option value="mmol">mmol/L</option><option value="mgdl">mg/dL</option></select>
+            <p class="note">Not sure? Look at any reading: numbers like 5.6 are mmol/L, numbers like 100 are mg/dL. You can switch any time on the Log page.</p>
+          </fieldset>
           <div class="field"><label class="lbl" for="uSetup">How do you manage your diabetes?</label>
         <select id="uSetup">
           <option value="mdi">Finger-prick tests and injections</option>
@@ -687,8 +710,6 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
         <div class="goalset"><input id="uCal" inputmode="numeric" placeholder="e.g. 2000"><span class="suffix">kcal a day</span></div>
         <p class="note">Leave blank if you don't want one. Never skip insulin to lose weight.</p>
       </div>
-          <div class="field"><label class="lbl" for="uUnit">Blood sugar units</label>
-        <select id="uUnit"><option value="mmol">mmol/L (UK)</option><option value="mgdl">mg/dL</option></select></div>
           <div class="field"><label class="lbl" for="uBodyUnit">Height and weight units</label>
         <select id="uBodyUnit"><option value="metric">Centimetres and kilograms</option><option value="imperial">Feet, inches, stone and pounds</option></select></div>
           <div class="row" id="uMetricRow">
@@ -3691,7 +3712,7 @@ try{ new MutationObserver(applyTheme).observe(document.documentElement, {attribu
 $('uRapid').innerHTML = $('sRapid').innerHTML; $('uLong').innerHTML = $('sLong').innerHTML;
 function showSignup(){
   $('uGoal').value = goalKey(); $('uGoalNote').innerHTML = goalNoteHTML(goalKey());
-  $('uUnit').value = S.unit; $('uRapid').value = S.rapidName; $('uLong').value = S.longName;
+  $('uUnit').value = (S.unit && localStorage.getItem('t1sugarlog.v1')) ? S.unit : (['US','PR','GU','VI','AS','MP'].includes(guessCountry()) ? 'mgdl' : 'mmol'); syncUnitPick(); $('uUnit').dispatchEvent(new Event('change')); $('uRapid').value = S.rapidName; $('uLong').value = S.longName;
   $('uSetup').value = setupKey(); $('uSensor').value = S.sensor || 'libre3'; $('uPump').value = S.pump || 'omnipod'; devUI('u');
   fillBody('u', suUnit, null, null);
   $('signup').hidden = false; document.body.style.overflow = 'hidden'; suShow(1);
@@ -3743,6 +3764,8 @@ $('signupForm').addEventListener('submit', ev=>{
   renderAll(); window.scrollTo(0,0);
   toast(S.name ? `Welcome, ${S.name}` : 'Welcome to T1Dy');
 });
+function syncUnitPick(){ document.querySelectorAll('input[name="uUnitPick"]').forEach(r=>r.checked = r.value===$('uUnit').value) }
+document.querySelectorAll('input[name="uUnitPick"]').forEach(r=>r.addEventListener('change', ()=>{ if(r.checked){ $('uUnit').value = r.value; $('uUnit').dispatchEvent(new Event('change')) } }));
 $('uUnit').addEventListener('change', ()=>{ document.querySelectorAll('.uu').forEach(el=>el.textContent = $('uUnit').value==='mgdl' ? 'mg/dL' : 'mmol/L') });
 $('uGoal').onchange = ()=>{ $('uGoalNote').innerHTML = goalNoteHTML($('uGoal').value) };
 $('sGoal').onchange = ()=>{
