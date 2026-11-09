@@ -571,10 +571,80 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
 :root[data-look="light"] .view:not(#v-log) .card:not(.hero) .lbl{color:#3E5A56}
 :root[data-look="light"] .view:not(#v-log) h2{color:#0B5A51}
 :root[data-look="light"] .view:not(#v-log) .hero h2{color:#fff}
+
+/* Drive check */
+.drivecard{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;padding:16px 18px}
+.drivecard .dico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none;color:#fff;background:linear-gradient(135deg,#0E6F64,#178C7E 55%,#3E6FC9)}
+.drivecard .dtxt{display:grid;gap:3px;flex:1;min-width:0}
+.drivecard .dtxt b{font-size:1rem}
+.drivecard .dtxt span{font-size:.86rem;color:var(--muted)}
+.drivecard .dgo{font-size:1.6rem;color:var(--muted);line-height:1}
+:root[data-look="light"] .card.drivecard{background:linear-gradient(135deg,#0E6F64 0%,#14857A 45%,#4B5FC8 100%);border-color:transparent;color:#fff;box-shadow:0 12px 28px rgba(20,110,110,.25)}
+:root[data-look="light"] .drivecard .dtxt span,:root[data-look="light"] .drivecard .dgo{color:rgba(255,255,255,.85)}
+:root[data-look="light"] .drivecard .dico{background:rgba(255,255,255,.2)}
+.drivecard.trip .dico{animation:none}
+.drivecard.due{animation:dvpulse 1.4s ease-in-out infinite}
+:root[data-look="light"] .card.drivecard.due,:root[data-look="light"] .card.drivecard.wait{background:linear-gradient(135deg,#B45309,#D97706 55%,#C2410C)}
+:root[data-look="dark"] .drivecard.due,:root[data-look="dark"] .drivecard.wait{border-color:#D97706}
+@keyframes dvpulse{50%{transform:scale(1.02)}}
+@media (prefers-reduced-motion:reduce){.drivecard.due{animation:none}}
+.driveov{position:fixed;inset:0;z-index:40;overflow-y:auto;background:var(--bg);padding:calc(16px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom))}
+:root[data-look="light"] .driveov{background:linear-gradient(165deg,#C9EBDF 0%,#D7E4F7 48%,#EFDDEB 100%)}
+.driveov .wrap{display:grid;gap:14px}
+.dvtop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.dvtop h2{margin:4px 0 0}
+.dvcard{display:grid;gap:10px}
+.dvcard summary{cursor:pointer;list-style-position:outside}
+.dvlist{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;line-height:1.45}
+.dvres{border-radius:16px;padding:14px 16px;display:grid;gap:6px;margin-top:4px}
+.dvres p{margin:0;line-height:1.45}
+.dvres b{font-size:1.05rem}
+.dvres.ok{background:color-mix(in srgb,#16A34A 16%,var(--surface));border:1px solid color-mix(in srgb,#16A34A 45%,transparent)}
+.dvres.warn{background:color-mix(in srgb,#D97706 16%,var(--surface));border:1px solid color-mix(in srgb,#D97706 45%,transparent)}
+.dvres.bad{background:color-mix(in srgb,#DC2626 16%,var(--surface));border:1px solid color-mix(in srgb,#DC2626 45%,transparent)}
+.dvres .btn{justify-self:start;margin-top:4px}
+.dvtrip{display:grid;gap:6px;justify-items:start}
+.dvclock{font:800 2.4rem/1 var(--mono, ui-monospace),monospace;letter-spacing:-.02em}
+.dvtrip.due .dvclock,.dvtrip.wait .dvclock{color:#D97706}
+.dvfoot{text-align:center;padding:0 8px}
+.dvcard .bg-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.dvcard .bg-row .suffix{font-weight:600}
+.dvcard .bg-row .btn{grid-column:1/-1}
 </style>
 </head>
 <body>
 
+
+<div id="drive" class="driveov" hidden role="dialog" aria-modal="true" aria-labelledby="dvH">
+  <div class="wrap">
+    <div class="card hero dvhero">
+      <div class="dvtop"><div><span class="sukick" style="color:rgba(255,255,255,.85)">Drive check</span><h2 id="dvH">Are you 5 to drive?</h2></div>
+        <button type="button" class="btn small ghost" id="dvClose" aria-label="Close drive check">✕</button></div>
+      <p class="note">If you take insulin, UK law says your sugar must be 5 mmol/L or above before you drive, and checked at least every 2 hours on the journey.</p>
+    </div>
+    <div class="card dvcard">
+      <label class="lbl" for="dvBg">Your blood sugar right now</label>
+      <div class="bg-row"><input id="dvBg" inputmode="decimal" placeholder="e.g. 6.2" aria-describedby="dvHint"><span class="suffix u" id="dvUnit">mmol/L</span><button class="btn" type="button" id="dvCheck">Check</button></div>
+      <p class="note" id="dvHint">Use a reading from just now. If you use a sensor, it must be one approved for driving decisions, and finger-prick if you're unsure.</p>
+      <div id="dvResult" aria-live="polite"></div>
+    </div>
+    <div class="card dvcard" id="dvTrip" hidden></div>
+    <details class="card dvcard"><summary><b>In the car, always have</b></summary>
+      <ul class="dvlist">
+        <li>Your meter and test strips, even if you use a sensor</li>
+        <li>Fast sugar within reach, like glucose tablets, jelly babies or a sugary drink</li>
+        <li>Slower carbs, like plain biscuits or a cereal bar</li>
+      </ul></details>
+    <details class="card dvcard"><summary><b>If you go low while driving</b></summary>
+      <ol class="dvlist">
+        <li>Pull over safely as soon as you can and switch off the engine.</li>
+        <li>Take the keys out and move to the passenger seat if it's safe.</li>
+        <li>Treat the hypo and recheck after 15 minutes.</li>
+        <li>Only drive again 45 minutes after you're back to 5 or above.</li>
+      </ol></details>
+    <p class="note dvfoot">Based on DVLA and Diabetes UK guidance for car and motorbike licences. Lorry and bus rules are stricter. Outside the UK, check your local rules. You must stop driving if you can't feel your hypos coming on.</p>
+  </div>
+</div>
 
 <div id="signup" class="signup" hidden>
   <div class="wrap">
@@ -772,6 +842,12 @@ nav.tabs button[aria-selected="true"] svg{transform:translateY(-1px)}
     <div class="card calcard" id="calCard">
       <button type="button" class="calmain" id="calMain" aria-label="Today. Open your overview"></button>
     </div>
+
+    <button type="button" class="card drivecard" id="driveCard" aria-haspopup="dialog">
+      <span class="dico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M6 17v2M18 17v2M4 13l2-6a2 2 0 0 1 2-1.4h8A2 2 0 0 1 18 7l2 6v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/></svg></span>
+      <span class="dtxt"><b id="driveTitle">Driving? Check you're 5 to drive</b><span id="driveSub">UK DVLA rules, done for you</span></span>
+      <span class="dgo" aria-hidden="true">›</span>
+    </button>
 
     <div class="card watercard" id="waterCard">
       <div class="wtop">
@@ -1262,7 +1338,7 @@ function exampleEntries(){
   })).filter(e=>e.t<=now);
 }
 const defaults = {
-  water:{}, waterGoal:2000,
+  water:{}, waterGoal:2000, drive:{active:false, last:null, waitFrom:null},
   unit:'mmol', rapidName:'NovoRapid', longName:'Lantus',
   target:6, correctAbove:10, isf:3, icr:10, dur:4, inc:0.5, red:{light:25, moderate:50, hard:75},
   confirmed:false, foods:[], lastImport:null, theme:'system', calGoalOn:false, calGoal:0, area:'', country:'', pump:'', sensor:'', setup:'cgm', lastPumpImport:null, heightCm:null, weightKg:null, bodyUnit:'metric', name:'', onboarded:false, goal:'steady', entries: exampleEntries()
@@ -2724,7 +2800,7 @@ function renderSettings(){
 }
 
 function renderAll(){
-  L = learn(); renderWater();
+  L = learn(); renderWater(); renderDriveCard();
   $('fUnit').value = S.unit;
   $('fBg').placeholder = S.unit==='mgdl' ? 'e.g. 115' : 'e.g. 6.4';
   $('fRapidType').value = S.rapidName; $('fLongType').value = S.longName;
@@ -3302,6 +3378,90 @@ $('saveBody').onclick = ()=>{
 };
 (function(){ const opts = COUNTRY_CODES.map(c=>[c, countryName(c)]).sort((a,b)=>a[1].localeCompare(b[1], 'en')); $('sCountry').innerHTML = opts.map(([c,n])=>`<option value="${c}">${esc(n)}</option>`).join('') })();
 
+
+/* ---------- Drive check (UK "5 to drive") ---------- */
+const DRIVE_MIN = 5.0, WAIT_MS = 45*60*1000, TRIP_MS = 2*60*60*1000;
+function fmtLeft(ms){ ms=Math.max(0,ms); const h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000), s=Math.floor(ms%60000/1000); return h ? `${h}h ${String(m).padStart(2,'0')}m` : `${m}:${String(s).padStart(2,'0')}` }
+function driveState(){
+  const d = S.drive || (S.drive={active:false,last:null,waitFrom:null}), now=Date.now();
+  if(d.waitFrom && now - d.waitFrom < WAIT_MS) return {k:'wait', left: d.waitFrom + WAIT_MS - now};
+  if(d.active && d.last){ const left = d.last + TRIP_MS - now; return {k: left>0 ? 'trip' : 'due', left} }
+  return {k:'idle'};
+}
+function renderDriveCard(){
+  const st = driveState(), card=$('driveCard');
+  card.classList.toggle('due', st.k==='due'); card.classList.toggle('wait', st.k==='wait'); card.classList.toggle('trip', st.k==='trip');
+  if(st.k==='trip'){ $('driveTitle').textContent = `On a drive · next check in ${fmtLeft(st.left)}`; $('driveSub').textContent = 'Tap to check again or end your drive' }
+  else if(st.k==='due'){ $('driveTitle').textContent = 'Drive check due now'; $('driveSub').textContent = 'Pull over safely and check your sugar' }
+  else if(st.k==='wait'){ $('driveTitle').textContent = `Don't drive yet · ${fmtLeft(st.left)} to wait`; $('driveSub').textContent = '45-minute wait after a low' }
+  else { $('driveTitle').textContent = "Driving? Check you're 5 to drive"; $('driveSub').textContent = 'UK DVLA rules, done for you' }
+}
+function dvShow(){
+  $('dvUnit').textContent = uLabel(); $('dvBg').placeholder = S.unit==='mgdl' ? 'e.g. 112' : 'e.g. 6.2';
+  const last = S.entries.filter(e=>e.bg!=null && !e.example && e.t<=Date.now()).sort((a,b)=>b.t-a.t)[0];
+  $('dvBg').value = last && Date.now()-last.t < 15*60000 ? show(last.bg) : '';
+  $('dvResult').innerHTML = ''; renderTrip();
+  $('drive').hidden = false; document.body.style.overflow='hidden'; setTimeout(()=>$('dvBg').focus(), 50);
+}
+function dvHide(){ $('drive').hidden = true; document.body.style.overflow=''; renderDriveCard() }
+function renderTrip(){
+  const st = driveState(), box=$('dvTrip');
+  if(st.k==='trip' || st.k==='due'){
+    box.hidden=false;
+    box.innerHTML = `<div class="dvtrip ${st.k}"><span class="lbl">${st.k==='due'?'Check due now':'Next check in'}</span><span class="dvclock" id="dvClock">${st.k==='due'?'Now':fmtLeft(st.left)}</span>
+      <p class="note">${st.k==='due' ? 'It has been 2 hours. Pull over safely and check before you carry on.' : 'Check again before this runs out, or sooner if you feel low.'}</p>
+      <button type="button" class="btn ghost small" id="dvEnd">I've finished driving</button></div>`;
+    $('dvEnd').onclick = ()=>{ S.drive.active=false; save(); renderTrip(); renderDriveCard(); toast('Drive ended') };
+  } else if(st.k==='wait'){
+    box.hidden=false;
+    box.innerHTML = `<div class="dvtrip wait"><span class="lbl">Safe to drive in</span><span class="dvclock" id="dvClock">${fmtLeft(st.left)}</span><p class="note">You were low, so wait 45 minutes after getting back to 5 or above. Recheck before you set off.</p></div>`;
+  } else { box.hidden=true; box.innerHTML='' }
+}
+function logDriveReading(mmol){
+  S.entries.push({id:'e'+Date.now(), t:Date.now(), bg:mmol, rapid:null, long:null, carbs:null, act:'none', mins:null, food:'', kind:null, note:'Drive check', example:false});
+}
+$('dvCheck').addEventListener('click', ()=>{
+  const raw = num($('dvBg').value);
+  if(raw==null){ toast('Enter your blood sugar first'); $('dvBg').focus(); return }
+  const v = toMmol(raw);
+  if(v < 1 || v > 35){ toast('That reading looks wrong. Check and try again'); return }
+  logDriveReading(v);
+  const d = S.drive, wasLow = d.waitFrom!=null || false;
+  let html;
+  if(v < HYPO){
+    d.active=false; d.waitFrom=null; d.lowAt=Date.now();
+    html = `<div class="dvres bad"><b>Don't drive. You're low (${show(v)}).</b><p>Treat your hypo now with fast sugar, then recheck in 15 minutes. When you're back to ${show(DRIVE_MIN)} or above, wait 45 minutes before you drive.</p><button type="button" class="btn small" id="dvHypo">Log my hypo treatment</button></div>`;
+  } else if(v < DRIVE_MIN){
+    d.active=false;
+    html = `<div class="dvres warn"><b>Not yet. You're ${show(v)}, under ${show(DRIVE_MIN)}.</b><p>Eat some carbs first, like a couple of biscuits or a cereal bar. Then check again before you set off.</p></div>`;
+  } else {
+    if(d.lowAt && Date.now()-d.lowAt < 6*3600000 && !d.waitFrom){
+      d.waitFrom = Date.now(); d.lowAt=null; d.active=false;
+      html = `<div class="dvres warn"><b>Back to ${show(v)}. Now wait 45 minutes.</b><p>You were low earlier, so your brain needs time to recover. Don't drive until the timer below finishes, then check again.</p></div>`;
+    } else if(d.waitFrom && Date.now()-d.waitFrom < WAIT_MS){
+      html = `<div class="dvres warn"><b>Still in your 45-minute wait.</b><p>You can drive once the timer finishes and you're still ${show(DRIVE_MIN)} or above.</p></div>`;
+    } else {
+      d.waitFrom=null; d.lowAt=null; d.active=true; d.last=Date.now();
+      const trend = v < 6 ? ' You are only just above 5, so have a snack before you go.' : '';
+      html = `<div class="dvres ok"><b>✓ You're ${show(v)}. Safe to drive.</b><p>Drive safe. T1Dy will remind you to check again in 2 hours.${trend}</p></div>`;
+    }
+  }
+  save(); $('dvResult').innerHTML = html; renderTrip(); renderDriveCard(); renderAll();
+  const hb = $('dvHypo'); if(hb) hb.onclick = ()=>{ dvHide(); const m=document.querySelector('[data-mode="hypo"]'); if(m) m.click(); $('fBg').value = show(v); $('fBg').dispatchEvent(new Event('input',{bubbles:true})); window.scrollTo({top:$('fBg').getBoundingClientRect().top+scrollY-120,behavior:'smooth'}) };
+});
+$('dvBg').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('dvCheck').click() } });
+$('driveCard').addEventListener('click', dvShow);
+$('dvClose').addEventListener('click', dvHide);
+$('drive').addEventListener('keydown', e=>{ if(e.key==='Escape') dvHide() });
+let dvLastState = null;
+setInterval(()=>{
+  const st = driveState();
+  if(dvLastState==='trip' && st.k==='due'){ try{ beep() }catch(e){} toast('Drive check due. Pull over safely and check your sugar') }
+  if(dvLastState==='wait' && st.k!=='wait'){ toast('Your 45-minute wait is over. Check you\'re 5 to drive') }
+  dvLastState = st.k;
+  renderDriveCard();
+  if(!$('drive').hidden){ const c=$('dvClock'); if(c && (st.k==='trip'||st.k==='wait')) c.textContent = fmtLeft(st.left); else if(c && st.k==='due' && c.textContent!=='Now') renderTrip() }
+}, 1000);
 /* ---------- Water ---------- */
 function dayId(t){ const d = new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0') }
 function waterOn(t){ const w = S.water && S.water[dayId(t)]; return w ? w.reduce((a,b)=>a+b,0) : 0 }
